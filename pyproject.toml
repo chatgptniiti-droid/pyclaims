@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyclaims"
+version = "0.7.0"
+description = "Dummy claims SDK for Scenario B UAT"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{name = "Niiti Demo"}]
+
+[tool.setuptools]
+packages = ["pyclaims"]

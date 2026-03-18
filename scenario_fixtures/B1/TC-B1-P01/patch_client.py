@@ -1,0 +1,6 @@
+class ClaimClient:
+    def __init__(self, api_key: str, region: str = "us", timeout_seconds: int = 30, max_retries: int = 2):
+        ...
+    def create_claim(self, amount_cents: int, currency: str = "USD"):
+        # now returns claim plus request metadata
+        ...
