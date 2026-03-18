@@ -22,6 +22,7 @@ class UploadReceipt:
 class RequestMeta:
     request_id: str
     retries: int = 0
+    timeout_seconds_used: Optional[int] = None
 
 @dataclass
 class TerminalClaimState:
