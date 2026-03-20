@@ -2,6 +2,7 @@
 
 ## 0.9.0
 - create_claim() is the preferred claim creation method and supports idempotency_key for retry-safe requests.
+- create_claim() includes include_audit_trail and returns RequestMeta.audit_requested.
 - submit_claim() is deprecated and remains only as a compatibility alias.
 - retry_on_429 is deprecated and ignored by the current implementation.
 

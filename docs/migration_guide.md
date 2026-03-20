@@ -7,16 +7,40 @@
 `create_claim()` is the preferred path. `submit_claim()` remains as a deprecated
 compatibility alias.
 
-**Before**
+**Before (sync)**
 
 ```python
-client.submit_claim(amount_cents=2500, currency="USD")
+client.submit_claim(amount_cents=2500, currency="USD", retry_on_429=True)
 ```
 
-**After**
+**After (sync)**
 
 ```python
-client.create_claim(amount_cents=2500, currency="USD")
+claim, meta = client.create_claim(
+    amount_cents=2500,
+    currency="USD",
+    idempotency_key="claim-0001",
+    include_audit_trail=True,
+)
+print(meta.request_id, meta.audit_requested)
+```
+
+**Before (async)**
+
+```python
+await client.submit_claim(amount_cents=2500, currency="USD", retry_on_429=True)
+```
+
+**After (async)**
+
+```python
+claim, meta = await client.create_claim(
+    amount_cents=2500,
+    currency="USD",
+    idempotency_key="claim-async-0001",
+    include_audit_trail=True,
+)
+print(meta.request_id, meta.audit_requested)
 ```
 
 ### Use idempotency_key for retry-safe creation
@@ -24,13 +48,10 @@ client.create_claim(amount_cents=2500, currency="USD")
 `idempotency_key` is optional. Provide a stable value to retry the same logical
 request without creating a duplicate claim.
 
-```python
-client.create_claim(
-    amount_cents=2500,
-    currency="USD",
-    idempotency_key="claim-0001",
-)
-```
+### include_audit_trail adds an audit metadata signal
+
+When `include_audit_trail=True`, the returned `RequestMeta.audit_requested`
+value is True.
 
 ### retry_on_429 is deprecated and ignored
 

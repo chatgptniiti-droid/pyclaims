@@ -1,7 +1,9 @@
 # Parameter Matrix
 
-| Symbol | Example |
+| Symbol | Parameters / Notes |
 |---|---|
-| `ClaimClient` | `ClaimClient(api_key="demo", region="us", timeout_seconds=30)` |
-| `create_claim` | `client.create_claim(amount_cents=1000, currency="USD", idempotency_key="claim-0001")` |
-| `submit_claim` | `client.submit_claim(...)` (deprecated compatibility alias; retry_on_429 ignored) |
+| `ClaimClient` | `ClaimClient(api_key, region='us', timeout_seconds=30, max_retries=2)` |
+| `AsyncClaimClient` | `AsyncClaimClient(api_key, region='us', timeout_seconds=30, max_retries=2)` |
+| `create_claim` | `amount_cents, currency='USD', idempotency_key=None, include_audit_trail=False` (returns `Claim, RequestMeta`) |
+| `RequestMeta` | `request_id, retries, timeout_seconds_used, audit_requested` (`audit_requested` mirrors include_audit_trail) |
+| `submit_claim` | `amount_cents, currency='USD', retry_on_429=True` (**deprecated**; `retry_on_429` ignored) |
