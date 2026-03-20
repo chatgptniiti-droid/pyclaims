@@ -2,13 +2,16 @@
 
 ## ClaimClient
 
-### `ClaimClient(api_key, region='us', max_retries=2)`
+### `ClaimClient(api_key, region='us', timeout_seconds=30, max_retries=2)`
 
 Main synchronous client.
 
 ### `create_claim(amount_cents, currency='USD')`
 
-Creates a claim and returns a `Claim`.
+Creates a claim.
+
+Returns a tuple of (Claim, RequestMeta).
+RequestMeta includes request_id and retries.
 
 ### `submit_claim(amount_cents, currency='USD')`
 

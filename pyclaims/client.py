@@ -2,12 +2,20 @@
 
 Example:
     >>> client = ClaimClient(api_key="demo", region="us", timeout_seconds=30)
-    >>> claim, meta = client.create_claim(amount_cents=1000, currency="USD")
+    >>> claim, meta = client.create_claim(
+    ...     amount_cents=1000,
+    ...     currency="USD",
+    ...     idempotency_key="claim-001",
+    ... )
     >>> claim.status
     'submitted'
     >>> meta.request_id.startswith("req_")
     True
 """
+
+from __future__ import annotations
+
+import warnings
 
 from .models import Claim, ClaimStatus, UploadReceipt, RequestMeta
 
@@ -29,21 +37,59 @@ class ClaimClient:
         self,
         amount_cents: int,
         currency: str = "USD",
+        idempotency_key: str | None = None,
     ) -> tuple[Claim, RequestMeta]:
+        """Create a claim.
+
+        Args:
+            amount_cents: Claim amount in cents.
+            currency: ISO currency code. Defaults to USD.
+            idempotency_key: Optional unique key used to safely retry the same
+                logical request without creating a duplicate claim.
+
+        Returns:
+            A tuple of (Claim, RequestMeta).
+        """
+        suffix = (idempotency_key or "123")[-6:]
         claim = Claim(
-            id="clm_123",
+            id=f"clm_{suffix}",
             amount_cents=amount_cents,
             currency=currency,
         )
         meta = RequestMeta(
-            request_id="req_123",
+            request_id=f"req_{suffix}",
             retries=0,
+            timeout_seconds_used=self.timeout_seconds,
         )
         return claim, meta
 
-    def submit_claim(self, amount_cents: int, currency: str = "USD") -> tuple[Claim, RequestMeta]:
-        """Deprecated soon; kept for migration examples in future fixtures."""
-        return self.create_claim(amount_cents=amount_cents, currency=currency)
+    def submit_claim(
+        self,
+        amount_cents: int,
+        currency: str = "USD",
+        retry_on_429: bool = True,
+    ) -> tuple[Claim, RequestMeta]:
+        """Deprecated: use create_claim() instead.
+
+        Args:
+            amount_cents: Claim amount in cents.
+            currency: ISO currency code. Defaults to USD.
+            retry_on_429: Deprecated compatibility flag retained only for older
+                integrations. It is ignored by the current implementation.
+
+        Returns:
+            A tuple of (Claim, RequestMeta).
+        """
+        warnings.warn(
+            "submit_claim() is deprecated; use create_claim() instead. "
+            "retry_on_429 is also deprecated and will be removed in a future release.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.create_claim(
+            amount_cents=amount_cents,
+            currency=currency,
+        )
 
     def upload_document(self, path: str) -> UploadReceipt:
         return UploadReceipt(document_id="doc_123")
@@ -72,15 +118,23 @@ class AsyncClaimClient:
         self,
         amount_cents: int,
         currency: str = "USD",
+        idempotency_key: str | None = None,
     ) -> tuple[Claim, RequestMeta]:
+        """Create a claim asynchronously.
+
+        Returns:
+            A tuple of (Claim, RequestMeta).
+        """
+        suffix = (idempotency_key or "async123")[-6:]
         claim = Claim(
-            id="clm_async_123",
+            id=f"clm_async_{suffix}",
             amount_cents=amount_cents,
             currency=currency,
         )
         meta = RequestMeta(
-            request_id="req_async_123",
+            request_id=f"req_async_{suffix}",
             retries=0,
+            timeout_seconds_used=self.timeout_seconds,
         )
         return claim, meta
 
