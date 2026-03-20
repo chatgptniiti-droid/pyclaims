@@ -1,25 +1,47 @@
 """Main client for the dummy pyclaims SDK.
 
 Example:
-    >>> client = ClaimClient(api_key="demo", region="us")
-    >>> claim = client.create_claim(amount_cents=1000, currency="USD")
+    >>> client = ClaimClient(api_key="demo", region="us", timeout_seconds=30)
+    >>> claim, meta = client.create_claim(amount_cents=1000, currency="USD")
     >>> claim.status
     'submitted'
+    >>> meta.request_id.startswith("req_")
+    True
 """
 
-from typing import Optional
-from .models import Claim, ClaimStatus, UploadReceipt
+from .models import Claim, ClaimStatus, UploadReceipt, RequestMeta
+
 
 class ClaimClient:
-    def __init__(self, api_key: str, region: str = "us", max_retries: int = 2):
+    def __init__(
+        self,
+        api_key: str,
+        region: str = "us",
+        timeout_seconds: int = 30,
+        max_retries: int = 2,
+    ):
         self.api_key = api_key
         self.region = region
+        self.timeout_seconds = timeout_seconds
         self.max_retries = max_retries
 
-    def create_claim(self, amount_cents: int, currency: str = "USD") -> Claim:
-        return Claim(id="clm_123", amount_cents=amount_cents, currency=currency)
+    def create_claim(
+        self,
+        amount_cents: int,
+        currency: str = "USD",
+    ) -> tuple[Claim, RequestMeta]:
+        claim = Claim(
+            id="clm_123",
+            amount_cents=amount_cents,
+            currency=currency,
+        )
+        meta = RequestMeta(
+            request_id="req_123",
+            retries=0,
+        )
+        return claim, meta
 
-    def submit_claim(self, amount_cents: int, currency: str = "USD") -> Claim:
+    def submit_claim(self, amount_cents: int, currency: str = "USD") -> tuple[Claim, RequestMeta]:
         """Deprecated soon; kept for migration examples in future fixtures."""
         return self.create_claim(amount_cents=amount_cents, currency=currency)
 
@@ -34,13 +56,33 @@ class ClaimClient:
 
 
 class AsyncClaimClient:
-    def __init__(self, api_key: str, region: str = "us", max_retries: int = 2):
+    def __init__(
+        self,
+        api_key: str,
+        region: str = "us",
+        timeout_seconds: int = 30,
+        max_retries: int = 2,
+    ):
         self.api_key = api_key
         self.region = region
+        self.timeout_seconds = timeout_seconds
         self.max_retries = max_retries
 
-    async def create_claim(self, amount_cents: int, currency: str = "USD") -> Claim:
-        return Claim(id="clm_async_123", amount_cents=amount_cents, currency=currency)
+    async def create_claim(
+        self,
+        amount_cents: int,
+        currency: str = "USD",
+    ) -> tuple[Claim, RequestMeta]:
+        claim = Claim(
+            id="clm_async_123",
+            amount_cents=amount_cents,
+            currency=currency,
+        )
+        meta = RequestMeta(
+            request_id="req_async_123",
+            retries=0,
+        )
+        return claim, meta
 
     async def upload_document(self, path: str) -> UploadReceipt:
         return UploadReceipt(document_id="doc_async_123")
