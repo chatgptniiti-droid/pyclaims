@@ -8,6 +8,7 @@ def test_create_claim_returns_claim_and_meta():
     claim, meta = client.create_claim(
         amount_cents=100,
         idempotency_key="claim-001",
+        include_audit_trail=True,
     )
 
     assert claim.currency == "USD"
@@ -15,6 +16,7 @@ def test_create_claim_returns_claim_and_meta():
     assert claim.id.startswith("clm_")
     assert meta.request_id.startswith("req_")
     assert meta.timeout_seconds_used == 30
+    assert meta.audit_requested is True
 
 
 def test_submit_claim_is_deprecated_but_still_works():
