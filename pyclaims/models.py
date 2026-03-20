@@ -28,6 +28,11 @@ class RequestMeta:
     retries: int = 0
     timeout_seconds_used: Optional[int] = None
     audit_requested: bool = False
+<<<<<<< HEAD
+    audit_reference: Optional[str] = None
+=======
+    audit_context: dict[str, str] = field(default_factory=dict)
+>>>>>>> feature/add-audit-context
 
 
 @dataclass
