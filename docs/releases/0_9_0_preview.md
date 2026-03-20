@@ -1,7 +1,8 @@
 # 0.9.0 Preview
 
-This is an unreleased draft release note file.
+This release aligns the public claim creation flow with create_claim().
 
 Planned updates:
-- `submit_claim` renamed toward `create_claim`
-- `idempotency_key` may be introduced for safer retries
+- create_claim() is the preferred claim creation method and now supports idempotency_key.
+- submit_claim() remains as a deprecated compatibility alias.
+- retry_on_429 is deprecated and ignored by the current implementation.

@@ -6,10 +6,13 @@ Example:
     ...     amount_cents=1000,
     ...     currency="USD",
     ...     idempotency_key="claim-001",
+    ...     include_audit_trail=True,
     ... )
     >>> claim.status
     'submitted'
     >>> meta.request_id.startswith("req_")
+    True
+    >>> meta.audit_requested
     True
 """
 
@@ -38,6 +41,7 @@ class ClaimClient:
         amount_cents: int,
         currency: str = "USD",
         idempotency_key: str | None = None,
+        include_audit_trail: bool = False,
     ) -> tuple[Claim, RequestMeta]:
         """Create a claim.
 
@@ -46,6 +50,8 @@ class ClaimClient:
             currency: ISO currency code. Defaults to USD.
             idempotency_key: Optional unique key used to safely retry the same
                 logical request without creating a duplicate claim.
+            include_audit_trail: When True, request metadata records that audit
+                details were requested for downstream workflows.
 
         Returns:
             A tuple of (Claim, RequestMeta).
@@ -60,6 +66,7 @@ class ClaimClient:
             request_id=f"req_{suffix}",
             retries=0,
             timeout_seconds_used=self.timeout_seconds,
+            audit_requested=include_audit_trail,
         )
         return claim, meta
 
@@ -119,8 +126,17 @@ class AsyncClaimClient:
         amount_cents: int,
         currency: str = "USD",
         idempotency_key: str | None = None,
+        include_audit_trail: bool = False,
     ) -> tuple[Claim, RequestMeta]:
         """Create a claim asynchronously.
+
+        Args:
+            amount_cents: Claim amount in cents.
+            currency: ISO currency code. Defaults to USD.
+            idempotency_key: Optional unique key used to safely retry the same
+                logical request without creating a duplicate claim.
+            include_audit_trail: When True, request metadata records that audit
+                details were requested for downstream workflows.
 
         Returns:
             A tuple of (Claim, RequestMeta).
@@ -135,6 +151,7 @@ class AsyncClaimClient:
             request_id=f"req_async_{suffix}",
             retries=0,
             timeout_seconds_used=self.timeout_seconds,
+            audit_requested=include_audit_trail,
         )
         return claim, meta
 
