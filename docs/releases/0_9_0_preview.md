@@ -1,9 +1,7 @@
 # 0.9.0 Preview
 
-This release aligns the public claim creation flow with create_claim().
+This is an unreleased draft release note file.
 
 Planned updates:
-- create_claim() is the preferred claim creation method and supports idempotency_key.
-- create_claim() supports include_audit_trail and returns RequestMeta.audit_requested.
-- submit_claim() remains as a deprecated compatibility alias.
-- retry_on_429 is deprecated and ignored by the current implementation.
+- `submit_claim` renamed toward `create_claim`
+- `idempotency_key` may be introduced for safer retries

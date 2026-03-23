@@ -1,5 +1,5 @@
 from .client import ClaimClient, AsyncClaimClient
-from .models import Claim, ClaimStatus, UploadReceipt, RequestMeta
+from .models import Claim, ClaimStatus, UploadReceipt
 from .errors import PyClaimsError, InvalidTransitionError
 
 __all__ = [
@@ -8,7 +8,6 @@ __all__ = [
     "Claim",
     "ClaimStatus",
     "UploadReceipt",
-    "RequestMeta",
     "PyClaimsError",
     "InvalidTransitionError",
 ]

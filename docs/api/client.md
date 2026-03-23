@@ -2,70 +2,26 @@
 
 ## ClaimClient
 
-### `ClaimClient(api_key, region='us', timeout_seconds=30, max_retries=2)`
+### `ClaimClient(api_key, region='us', max_retries=2)`
 
 Main synchronous client.
 
-### `create_claim(amount_cents, currency='USD', idempotency_key=None, include_audit_trail=False)`
+### `create_claim(amount_cents, currency='USD')`
 
-Creates a claim.
+Creates a claim and returns a `Claim`.
 
-- amount_cents: Claim amount in cents.
-- currency: ISO currency code. Defaults to "USD".
-- idempotency_key: Optional unique key for retry-safe claim creation. Defaults to None.
-- include_audit_trail: When True, request metadata records that audit details were requested. Defaults to False.
+### `submit_claim(amount_cents, currency='USD')`
 
-Returns a tuple of (Claim, RequestMeta).
-RequestMeta fields: request_id, retries, timeout_seconds_used, audit_requested.
-`audit_requested` is True when include_audit_trail is True.
+Legacy alias for `create_claim`.
 
-```python
-from pyclaims import ClaimClient
+### `upload_document(path)`
 
-client = ClaimClient(api_key="demo", region="us", timeout_seconds=30)
-claim, meta = client.create_claim(
-    amount_cents=1000,
-    currency="USD",
-    idempotency_key="claim-001",
-    include_audit_trail=True,
-)
-print(claim.id, meta.request_id, meta.audit_requested)
-```
+Uploads a document and returns `UploadReceipt`.
 
-### `submit_claim(amount_cents, currency='USD', retry_on_429=True)`
+### `resolve_claim(claim_id)`
 
-**Deprecated.** Use `create_claim()`.
-`retry_on_429` defaults to True and is ignored by the current implementation.
-Returns a tuple of (Claim, RequestMeta).
+Resolves a claim and returns a string status.
 
-## AsyncClaimClient
+### `get_claim_status(claim_id)`
 
-### `AsyncClaimClient(api_key, region='us', timeout_seconds=30, max_retries=2)`
-
-Main asynchronous client.
-
-### `create_claim(amount_cents, currency='USD', idempotency_key=None, include_audit_trail=False)`
-
-Creates a claim asynchronously.
-
-- amount_cents: Claim amount in cents.
-- currency: ISO currency code. Defaults to "USD".
-- idempotency_key: Optional unique key for retry-safe claim creation. Defaults to None.
-- include_audit_trail: When True, request metadata records that audit details were requested. Defaults to False.
-
-Returns a tuple of (Claim, RequestMeta).
-RequestMeta fields: request_id, retries, timeout_seconds_used, audit_requested.
-`audit_requested` is True when include_audit_trail is True.
-
-```python
-from pyclaims import AsyncClaimClient
-
-client = AsyncClaimClient(api_key="demo", region="us", timeout_seconds=30)
-claim, meta = await client.create_claim(
-    amount_cents=1000,
-    currency="USD",
-    idempotency_key="claim-async-001",
-    include_audit_trail=True,
-)
-print(claim.id, meta.request_id, meta.audit_requested)
-```
+Returns a `ClaimStatus`.
