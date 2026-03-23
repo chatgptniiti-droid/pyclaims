@@ -1,40 +1,14 @@
 # Getting Started
 
-## Quickstart (sync)
+## Quickstart
 
 ```python
 from pyclaims import ClaimClient
 
-client = ClaimClient(api_key="demo", region="us", timeout_seconds=30)
-claim, meta = client.create_claim(
-    amount_cents=2500,
-    currency="USD",
-    idempotency_key="claim-0001",
-    include_audit_trail=True,
-)
-print(claim.id, claim.status, meta.request_id, meta.audit_requested)
+client = ClaimClient(api_key="demo", region="us")
+claim = client.create_claim(amount_cents=2500, currency="USD")
+print(claim.id, claim.status)
 ```
-
-## Quickstart (async)
-
-```python
-from pyclaims import AsyncClaimClient
-
-client = AsyncClaimClient(api_key="demo", region="us", timeout_seconds=30)
-claim, meta = await client.create_claim(
-    amount_cents=2500,
-    currency="USD",
-    idempotency_key="claim-async-0001",
-    include_audit_trail=True,
-)
-print(claim.id, claim.status, meta.request_id, meta.audit_requested)
-```
-
-`create_claim()` is the preferred path. It returns (Claim, RequestMeta).
-`RequestMeta.audit_requested` is True when include_audit_trail is True.
-Additional audit metadata fields (beyond `audit_requested`) are under review and not confirmed.
-`submit_claim()` is **deprecated** and retained only for compatibility.
-`retry_on_429` is deprecated and ignored. See the migration guide for updates.
 
 ## Uploading a document
 
