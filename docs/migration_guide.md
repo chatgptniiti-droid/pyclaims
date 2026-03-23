@@ -51,7 +51,8 @@ request without creating a duplicate claim.
 ### include_audit_trail adds an audit metadata signal
 
 When `include_audit_trail=True`, the returned `RequestMeta.audit_requested`
-value is True.
+value is True. Additional audit metadata fields (beyond `audit_requested`) are
+under review and not confirmed in the current implementation.
 
 ### retry_on_429 is deprecated and ignored
 

@@ -32,6 +32,7 @@ print(claim.id, claim.status, meta.request_id, meta.audit_requested)
 
 `create_claim()` is the preferred path. It returns (Claim, RequestMeta).
 `RequestMeta.audit_requested` is True when include_audit_trail is True.
+Additional audit metadata fields (beyond `audit_requested`) are under review and not confirmed.
 `submit_claim()` is **deprecated** and retained only for compatibility.
 `retry_on_429` is deprecated and ignored. See the migration guide for updates.
 

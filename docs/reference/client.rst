@@ -12,6 +12,7 @@ ClaimClient
   - Returns a tuple of (Claim, RequestMeta).
   - RequestMeta fields: request_id, retries, timeout_seconds_used, audit_requested.
   - audit_requested is True when include_audit_trail is True.
+  - Audit metadata extensions beyond `audit_requested` are under review and not confirmed in the current implementation.
 - ``submit_claim(amount_cents, currency='USD', retry_on_429=True)``
   - **Deprecated.** retry_on_429 is ignored.
 
@@ -22,6 +23,7 @@ AsyncClaimClient
   - Returns a tuple of (Claim, RequestMeta).
   - RequestMeta fields: request_id, retries, timeout_seconds_used, audit_requested.
   - audit_requested is True when include_audit_trail is True.
+  - Audit metadata extensions beyond `audit_requested` are under review and not confirmed in the current implementation.
 
 .. autoclass:: pyclaims.client.ClaimClient
    :members:

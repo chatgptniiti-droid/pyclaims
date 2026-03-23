@@ -24,15 +24,17 @@ class UploadReceipt:
 
 @dataclass
 class RequestMeta:
+    """Metadata returned with claim requests.
+
+    `audit_requested` mirrors include_audit_trail. Additional audit metadata fields
+    are under review and not confirmed in the current implementation.
+    """
     request_id: str
     retries: int = 0
     timeout_seconds_used: Optional[int] = None
     audit_requested: bool = False
-<<<<<<< HEAD
-    audit_reference: Optional[str] = None
-=======
-    audit_context: dict[str, str] = field(default_factory=dict)
->>>>>>> feature/add-audit-context
+    # TODO: Audit metadata extensions (e.g., audit_reference vs audit_context) are under review.
+
 
 
 @dataclass
