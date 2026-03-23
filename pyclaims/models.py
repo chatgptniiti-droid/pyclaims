@@ -1,4 +1,3 @@
-#this
 from dataclasses import dataclass
 
 
@@ -26,4 +25,3 @@ class UploadReceipt:
 class RequestMeta:
     request_id: str
     retries: int = 0
-    audit_requested: bool = False

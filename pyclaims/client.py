@@ -1,4 +1,3 @@
-#this
 from .models import Claim, ClaimStatus, UploadReceipt, RequestMeta
 
 
@@ -7,19 +6,19 @@ class ClaimClient:
         self,
         api_key: str,
         region: str = "us",
-        timeout_seconds: int = 30,
         max_retries: int = 2,
+        sso_provider: str | None = None,
     ):
         self.api_key = api_key
         self.region = region
-        self.timeout_seconds = timeout_seconds
         self.max_retries = max_retries
+        self.sso_provider = sso_provider
 
     def create_claim(
         self,
         amount_cents: int,
         currency: str = "USD",
-        include_audit_trail: bool = False,
+        idempotency_key: str | None = None,
     ) -> tuple[Claim, RequestMeta]:
         claim = Claim(
             id="clm_123",
@@ -29,7 +28,6 @@ class ClaimClient:
         meta = RequestMeta(
             request_id="req_123",
             retries=0,
-            audit_requested=include_audit_trail,
         )
         return claim, meta
 
@@ -49,12 +47,15 @@ class ClaimClient:
     def get_claim_status(self, claim_id: str) -> ClaimStatus:
         return ClaimStatus(claim_id=claim_id, status="submitted")
 
-    def get_claim_status_history(self, claim_id: str) -> list[ClaimStatus]:
-        return [
-            ClaimStatus(claim_id=claim_id, status="submitted"),
-            ClaimStatus(claim_id=claim_id, status="processing"),
-            ClaimStatus(claim_id=claim_id, status="resolved"),
-        ]
+    def stream_events(self, claim_id: str):
+        """Stream claim lifecycle events for the given claim.
+
+        Intended for long-running claim monitoring workflows.
+        Yields status-oriented event objects in order as they arrive.
+        """
+        yield {"claim_id": claim_id, "event": "submitted"}
+        yield {"claim_id": claim_id, "event": "processing"}
+        yield {"claim_id": claim_id, "event": "resolved"}
 
 
 class AsyncClaimClient:
@@ -62,19 +63,19 @@ class AsyncClaimClient:
         self,
         api_key: str,
         region: str = "us",
-        timeout_seconds: int = 30,
         max_retries: int = 2,
+        sso_provider: str | None = None,
     ):
         self.api_key = api_key
         self.region = region
-        self.timeout_seconds = timeout_seconds
         self.max_retries = max_retries
+        self.sso_provider = sso_provider
 
     async def create_claim(
         self,
         amount_cents: int,
         currency: str = "USD",
-        include_audit_trail: bool = False,
+        idempotency_key: str | None = None,
     ) -> tuple[Claim, RequestMeta]:
         claim = Claim(
             id="clm_async_123",
@@ -84,7 +85,6 @@ class AsyncClaimClient:
         meta = RequestMeta(
             request_id="req_async_123",
             retries=0,
-            audit_requested=include_audit_trail,
         )
         return claim, meta
 
