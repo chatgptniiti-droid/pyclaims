@@ -2,79 +2,121 @@
 
 ## ClaimClient
 
+Main synchronous client for the pyclaims SDK.
+
 ### `ClaimClient(api_key, region='us', timeout_seconds=30, max_retries=2)`
 
-Main synchronous client.
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `api_key` | `str` | — | API key for authentication. |
+| `region` | `str` | `'us'` | Region to route requests to. |
+| `timeout_seconds` | `int` | `30` | Per-request timeout in seconds. |
+| `max_retries` | `int` | `2` | Maximum number of automatic retries on transient failures. |
+
+---
+
+### `create_claim(amount_cents, currency='USD') → tuple[Claim, RequestMeta]`
+
+Creates a new claim. This is the preferred public method for claim creation.
 
 | Parameter | Type | Default | Description |
 |---|---|---|---|
-| `api_key` | `str` | — | API key for authentication |
-| `region` | `str` | `'us'` | Target region |
-| `timeout_seconds` | `int` | `30` | Request timeout in seconds |
-| `max_retries` | `int` | `2` | Maximum retry attempts |
+| `amount_cents` | `int` | — | Claim amount in the smallest currency unit. |
+| `currency` | `str` | `'USD'` | ISO 4217 currency code. |
+
+**Returns:** `(Claim, RequestMeta)`
+
+```python
+client = ClaimClient(api_key="demo", region="us", timeout_seconds=30)
+claim, meta = client.create_claim(amount_cents=2500, currency="USD")
+print(claim.id, claim.status)
+print(meta.request_id)
+```
 
 ---
 
-### `create_claim(amount_cents, currency='USD') -> tuple[Claim, RequestMeta]`
+### `submit_claim(amount_cents, currency='USD') → tuple[Claim, RequestMeta]`
 
-Creates a claim. This is the preferred public method for claim creation as of 0.9.0.
+> **Deprecated.** This is a compatibility alias for `create_claim()`. Update integrations to call `create_claim()` directly.
 
-Returns a `(Claim, RequestMeta)` tuple. `RequestMeta` carries request-level metadata such as `request_id` and `retries`.
+Delegates to `create_claim()` with no behavioural difference. Will be removed in a future release.
+
+---
+
+### `upload_document(path, content_type='application/pdf') → UploadReceipt`
+
+Uploads a supporting document for a claim.
 
 | Parameter | Type | Default | Description |
 |---|---|---|---|
-| `amount_cents` | `int` | — | Claim amount in cents |
-| `currency` | `str` | `'USD'` | Currency code |
+| `path` | `str` | — | Local file path to upload. |
+| `content_type` | `str` | `'application/pdf'` | MIME type of the document. |
+
+**Returns:** `UploadReceipt`
+
+```python
+receipt = client.upload_document("invoice.pdf")
+print(receipt.document_id, receipt.status)
+```
 
 ---
 
-### `submit_claim(amount_cents, currency='USD') -> tuple[Claim, RequestMeta]`
+### `resolve_claim(claim_id) → str`
 
-**Deprecated.** Compatibility alias for `create_claim()`. Use `create_claim()` instead.
+Marks a claim as resolved.
 
-Will be removed in a future major release.
+| Parameter | Type | Description |
+|---|---|---|
+| `claim_id` | `str` | ID of the claim to resolve. |
 
----
-
-### `upload_document(path, content_type='application/pdf') -> UploadReceipt`
-
-Uploads a document and returns an `UploadReceipt`.
-
-| Parameter | Type | Default | Description |
-|---|---|---|---|
-| `path` | `str` | — | Local file path |
-| `content_type` | `str` | `'application/pdf'` | MIME type of the document |
+**Returns:** Status string (e.g. `"resolved"`).
 
 ---
 
-### `resolve_claim(claim_id) -> str`
+### `get_claim_status(claim_id) → ClaimStatus`
 
-Resolves a claim and returns a string status.
+Retrieves the current status of a claim.
 
----
+| Parameter | Type | Description |
+|---|---|---|
+| `claim_id` | `str` | ID of the claim to look up. |
 
-### `get_claim_status(claim_id) -> ClaimStatus`
+**Returns:** `ClaimStatus`
 
-Returns a `ClaimStatus` for the given claim ID.
+```python
+status = client.get_claim_status("clm_123")
+print(status.status)
+```
 
 ---
 
 ## AsyncClaimClient
 
-Async variant of `ClaimClient`. All methods are coroutines and must be awaited.
+Async counterpart of `ClaimClient`. All methods are coroutines and must be awaited.
 
 ### `AsyncClaimClient(api_key, region='us', timeout_seconds=30, max_retries=2)`
 
-Same constructor parameters as `ClaimClient`.
+Same parameters as `ClaimClient`.
 
 ---
 
-### `await create_claim(amount_cents, currency='USD') -> tuple[Claim, RequestMeta]`
+### `async create_claim(amount_cents, currency='USD') → tuple[Claim, RequestMeta]`
 
-Async version of `ClaimClient.create_claim()`. Returns `(Claim, RequestMeta)`.
+Creates a new claim asynchronously.
+
+```python
+client = AsyncClaimClient(api_key="demo", region="us")
+claim, meta = await client.create_claim(amount_cents=5000, currency="USD")
+print(claim.id)
+```
 
 ---
 
-### `await upload_document(path, content_type='application/pdf') -> UploadReceipt`
+### `async upload_document(path, content_type='application/pdf') → UploadReceipt`
 
-Async version of `ClaimClient.upload_document()`.
+Uploads a supporting document asynchronously.
+
+```python
+receipt = await client.upload_document("invoice.pdf")
+print(receipt.document_id)
+```

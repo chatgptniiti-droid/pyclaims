@@ -1,20 +1,22 @@
 # 0.9.0 Release Notes
 
-## What's New
+## Overview
 
-### `create_claim()` is now the preferred public method
+pyclaims 0.9.0 completes the claim creation API migration started in 0.8.0, formalises the preferred public interface, and removes deprecated parameters.
 
-`create_claim()` replaces `submit_claim()` as the canonical entry point for claim creation. Both `ClaimClient` and `AsyncClaimClient` now return a `(Claim, RequestMeta)` tuple instead of a bare `Claim`, giving callers access to request-level metadata (`request_id`, `retries`).
+## Breaking changes
 
-### `timeout_seconds` constructor parameter
-
-`ClaimClient` and `AsyncClaimClient` now accept a `timeout_seconds` parameter (default: `30`) for per-request timeout control.
-
-### `upload_document()` accepts `content_type`
-
-Both clients now accept a `content_type` parameter (default: `'application/pdf'`) on `upload_document()`.
+- **`retry_on_429` removed.** Passing this parameter will raise a `TypeError`. Replace with `max_retries` on the client constructor.
 
 ## Deprecations
 
-- **`submit_claim()`** — deprecated compatibility alias for `create_claim()`. Will be removed in a future major release. Migrate callers to `create_claim()`.
-- **`retry_on_429`** — removed. Retry behaviour is now controlled solely via `max_retries`.
+- **`submit_claim()` deprecated.** The method still works and delegates to `create_claim()`, but will be removed in a future release. Migrate call sites to `create_claim()`.
+
+## New and updated behaviour
+
+- `create_claim()` is the confirmed preferred public path for claim creation on both `ClaimClient` and `AsyncClaimClient`.
+- `upload_document()` now accepts an optional `content_type` parameter (default `"application/pdf"`) on both sync and async clients.
+
+## Upgrade notes
+
+See the [Migration Guide](../migration_guide.md) for step-by-step instructions on updating from 0.8.x.
