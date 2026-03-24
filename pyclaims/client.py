@@ -1,14 +1,3 @@
-"""Main client for the dummy pyclaims SDK.
-
-Example:
-    >>> client = ClaimClient(api_key="demo", region="us", timeout_seconds=30)
-    >>> claim, meta = client.create_claim(amount_cents=1000, currency="USD")
-    >>> claim.status
-    'submitted'
-    >>> meta.request_id.startswith("req_")
-    True
-"""
-
 from .models import Claim, ClaimStatus, UploadReceipt, RequestMeta
 
 
@@ -41,11 +30,18 @@ class ClaimClient:
         )
         return claim, meta
 
-    def submit_claim(self, amount_cents: int, currency: str = "USD") -> tuple[Claim, RequestMeta]:
-        """Deprecated soon; kept for migration examples in future fixtures."""
+    def submit_claim(
+        self,
+        amount_cents: int,
+        currency: str = "USD",
+    ) -> tuple[Claim, RequestMeta]:
         return self.create_claim(amount_cents=amount_cents, currency=currency)
 
-    def upload_document(self, path: str) -> UploadReceipt:
+    def upload_document(
+        self,
+        path: str,
+        content_type: str = "application/pdf",
+    ) -> UploadReceipt:
         return UploadReceipt(document_id="doc_123")
 
     def resolve_claim(self, claim_id: str) -> str:
@@ -84,5 +80,9 @@ class AsyncClaimClient:
         )
         return claim, meta
 
-    async def upload_document(self, path: str) -> UploadReceipt:
+    async def upload_document(
+        self,
+        path: str,
+        content_type: str = "application/pdf",
+    ) -> UploadReceipt:
         return UploadReceipt(document_id="doc_async_123")

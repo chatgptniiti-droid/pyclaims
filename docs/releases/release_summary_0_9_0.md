@@ -43,12 +43,11 @@
 
 ---
 
-## PR and commit context
+## Commit context
 
-- **PR #10** (merged to main, 2026-03-24): Added claim status history support and audit-trail option.
+- **Commit `df06b43`**: `docs: full 0.9.0 documentation pass for KAN-34`
 - **Commit `a170f29`**: `docs: align client API docs to 0.9.0 for KAN-34`
-- **Commit `5685fed`**: Add claim status history support and audit-trail option to claim creation.
-- **Rohan Patil** — assignee and PR author.
+- **Rohan Patil** — assignee and author.
 
 ---
 
